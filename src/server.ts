@@ -9,7 +9,7 @@ import cepRouter from './routesCep';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = createBaseApp({ withSession: true });
-app.use('/api', cepRouter);
+app.use('/api/consulta-cep', cepRouter);
 
 const GATEWAY_PORT = resolvePort('PORT', 3333);
 
@@ -58,10 +58,58 @@ app.use(
     target: clientsTarget,
     changeOrigin: true,
     xfwd: true,
-    // pathRewrite removido para manter o prefixo
+    pathRewrite: { '^/': '/api/clients/' },
     on: {
       proxyReq: (proxyReq, req) => {
         attachIdentityHeaders(proxyReq as any, req as Request);
+      },
+    },
+  })
+);
+
+app.use(
+  '/api/casos',
+  createProxyMiddleware({
+    target: petitionsTarget,
+    changeOrigin: true,
+    xfwd: true,
+    pathRewrite: { '^/': '/api/casos/' },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        attachIdentityHeaders(proxyReq as any, req as Request);
+        fixRequestBody(proxyReq as any, req as Request);
+      },
+    },
+  })
+);
+
+app.use(
+  '/api/peticoes',
+  createProxyMiddleware({
+    target: petitionsTarget,
+    changeOrigin: true,
+    xfwd: true,
+    pathRewrite: { '^/': '/api/peticoes/' },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        attachIdentityHeaders(proxyReq as any, req as Request);
+        fixRequestBody(proxyReq as any, req as Request);
+      },
+    },
+  })
+);
+
+app.use(
+  '/api/eventos',
+  createProxyMiddleware({
+    target: petitionsTarget,
+    changeOrigin: true,
+    xfwd: true,
+    pathRewrite: { '^/': '/api/eventos/' },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        attachIdentityHeaders(proxyReq as any, req as Request);
+        fixRequestBody(proxyReq as any, req as Request);
       },
     },
   })
@@ -102,6 +150,10 @@ app.use(
     },
   })
 );
+// Rota GET para o caminho raiz ('/')
+app.get('/', (_req, res) => {
+  res.send('API Gateway está rodando!');
+});
 
 app.get('/health', (_req, res) => {
   res.json({

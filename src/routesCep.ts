@@ -3,7 +3,7 @@ import { consultaCep } from './services/cepService';
 
 const router = Router();
 
-router.get('/consulta-cep/:cep', async (req, res) => {
+router.get('/:cep', async (req, res) => {
   const { cep } = req.params;
   try {
     const data = await consultaCep(cep);
