@@ -115,7 +115,7 @@ app.use(
   })
 );
 
-// Proxy para /admin/clients
+// Encaminhamento para /admin/clientes
 app.use('/admin/clients', (req, res, next) => {
   console.log('[API-GATEWAY] Proxying /admin/clients', req.url, '->', authTarget + req.url);
   next();
@@ -123,7 +123,7 @@ app.use('/admin/clients', (req, res, next) => {
 app.use(
   '/admin/clients',
   createProxyMiddleware({
-    target: authTarget, // Aponta para o auth-service
+    target: authTarget, // Aponta para o servico de autenticacao
     changeOrigin: true,
     xfwd: true,
     pathRewrite: { '^/admin/clients': '/admin/clients' },
