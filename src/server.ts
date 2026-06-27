@@ -62,6 +62,7 @@ app.use(
     on: {
       proxyReq: (proxyReq, req) => {
         attachIdentityHeaders(proxyReq as any, req as Request);
+        fixRequestBody(proxyReq as any, req as Request);
       },
     },
   })
